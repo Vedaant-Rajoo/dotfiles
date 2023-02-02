@@ -1,8 +1,50 @@
-(beacon-mode 1)
+#+title: Config Org for my Doom Emacs
+#+author: Vedaant Rajoo
+#+property: header-args :tangle config.el
+#+auto_tangle: t
+#+startup: showeverything
 
+* Table of Contents :toc:
+- [[#about-this-config][About this Config]]
+  - [[#last-update][Last update]]
+- [[#beacon][BEACON]]
+- [[#gpg-configuration][GPG configuration]]
+- [[#display-config][Display Config]]
+- [[#doom-modeline-configuration][Doom Modeline Configuration]]
+- [[#mouse-support][Mouse Support]]
+- [[#line-settings][Line Settings]]
+- [[#markdown][MARKDOWN]]
+- [[#minimap][MINIMAP]]
+- [[#org-configuration][ORG Configuration]]
+  - [[#org-auto-tangle][Org-auto-tangle]]
+  - [[#org-agenda][Org-agenda]]
+  - [[#org-fonts][Org-Fonts]]
+  - [[#org-journal][Org-journal]]
+- [[#splits][SPLITS]]
+- [[#start-page][START PAGE]]
+
+* About this Config
+This is my personal Doom Emacs config. DOOM emacs is a flavor of GNU emacs editor that uses "evil" keybindings (VIM).
+** Last update
+Sun 29 Jan 2023
+
+* BEACON
+Never lose your cursor. Global minor-mode. Turn it on everywhere:
+#+begin_src emacs-lisp
+(beacon-mode 1)
+#+end_src
+
+* GPG configuration
+My identification incase any functionality needs it.
+#+begin_src emacs-lisp
 (setq user-full-name "Vedaant Rajoo"
       user-mail-address "vedaant12345@gmail.com")
+#+end_src
 
+* Display Config
+Configuration for my display elements like 'doom-theme', 'doom-font' etc.
+
+#+begin_src emacs-lisp
 (setq doom-theme 'doom-gruvbox
       doom-font (font-spec :family "FiraCode Nerd Font" :size 18)
       doom-variable-pitch-font (font-spec :family "Ubuntu Mono derivative Powerline" :size 15)
@@ -10,7 +52,11 @@
 (custom-set-faces!
   '(font-lock-comment-face :slant italic)
   '(font-lock-keyword-face :slant italic))
+#+end_src
+* Doom Modeline Configuration
+The modeline is the bottom status bar that appears in Emacs windows.
 
+#+begin_src emacs-lisp
 (set-face-attribute 'mode-line nil :font "Ubuntu Mono derivative Powerline")
 (setq doom-modeline-height 25
       doom-modeline-icon t
@@ -23,12 +69,27 @@
       doom-modeline-persp-name t
       doom-modeline-persp-icon t
       )
+#+end_src
 
+* Mouse Support
+Adding Mouse support to xterm (the terminal emulator)
+#+begin_src emacs-lisp
 (xterm-mouse-mode 1)
+#+end_src
+* Line Settings
+Couple of Line settings that contain new and remappings of current keybindings
+| Command              | Description                 | Keybinding |
+|----------------------+-----------------------------+------------|
+| comment-line         | /Comment or uncomment line/ | SPC TAB tab  |
 
+#+begin_src emacs-lisp
 (map! :leader
       :desc "Comment or uncoment Lines" "TAB TAB" #'comment-line)
+#+end_src
 
+* MARKDOWN
+
+#+begin_src emacs-lisp
 (custom-set-faces
  '(markdown-header-face ((t (:inherit font-lock-function-name-face :weight bold :family "variable-pitch"))))
  '(markdown-header-face-1 ((t (:inherit markdown-header-face :height 1.7))))
@@ -38,11 +99,26 @@
  '(markdown-header-face-5 ((t (:inherit markdown-header-face :height 1.3))))
  '(markdown-header-face-6 ((t (:inherit markdown-header-face :height 1.2)))))
 
+#+end_src
+
+* MINIMAP
+A minimap sidebar displaying a smaller version of the current buffer on either the left or right side. It highlights the currently shown region and updates its position automatically.  Be aware that this minimap program does not work in Org documents.  This is not unusual though because I have tried several minimap programs and none of them can handle Org.
+
+| COMMAND      | DESCRIPTION                               | KEYBINDING |
+|--------------+-------------------------------------------+------------|
+| minimap-mode | /Toggle minimap-mode/                       | SPC t m    |
+
+#+begin_src emacs-lisp
 (setq minimap-window-location 'right)
 (map! :leader
       (:prefix ("t" . "toggle")
        :desc "Toggle minimap-mode" "m" #'minimap-mode))
+#+end_src
 
+* ORG Configuration
+I wrapped most of this block in (after! org).
+
+#+BEGIN_SRC emacs-lisp
 (map! :leader
       :desc "Org babel tangle" "m B" #'org-babel-tangle)
 (after! org
@@ -72,7 +148,11 @@
              "|"                 ; The pipe necessary to separate "active" states and "inactive" states
              "DONE(d)"           ; Task has been completed
              "CANCELLED(c)" )))) ; Task has been cancelled
+#+END_SRC
+** Org-auto-tangle
+=org-auto-tangle= allows you to add the option =#+auto_tangle: t= in your Org file so that it automatically tangles when you save the document.  I have made adding this to your file even easier by creating a function 'dt/insert-auto-tangle-tag' and setting it to a keybinding 'SPC i a'.
 
+#+begin_src emacs-lisp
 (use-package! org-auto-tangle
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
@@ -88,7 +168,10 @@
 
 (map! :leader
       :desc "Insert auto_tangle tag" "i a" #'ne/insert-auto-tangle-tag)
+#+end_src
 
+** Org-agenda
+#+begin_src emacs-lisp
 (after! org
   (setq org-agenda-files '("~/nc/Org/agenda.org")))
 
@@ -119,7 +202,11 @@
 
           (agenda "")
           (alltodo "")))))
+#+end_src
 
+** Org-Fonts
+Setting the fonts specific to what theme I'm currently using for emacs.
+#+begin_src emacs-lisp
 (after! org
 (defun ne/org-colors-gruvbox-dark ()
   "Enable Gruvbox Dark colors for Org headers."
@@ -138,19 +225,34 @@
     (set-face-attribute 'org-table nil :font doom-font :weight 'normal :height 1.0 :foreground "#bfafdf"))
 (ne/org-colors-gruvbox-dark)
 )
+#+end_src
 
+
+** Org-journal
+#+begin_src emacs-lisp
 (setq org-journal-dir "~/Org/journal/"
       org-journal-date-prefix "* "
       org-journal-time-prefix "** "
       org-journal-date-format "%B %d, %Y (%A) "
       org-journal-file-format "%Y-%m-%d.org")
+#+end_src
 
+* SPLITS
+I set splits to default to opening on the right using 'prefer-horizontal-split'.  I set a keybinding for 'clone-indirect-buffer-other-window' for when I want to have the same document in two splits.  The text of the indirect buffer is always identical to the text of its base buffer; changes made by editing either one are visible immediately in the other.  But in all other respects, the indirect buffer and its base buffer are completely separate.  For example, I can fold one split but other will be unfolded.
+
+#+BEGIN_SRC emacs-lisp
 (defun prefer-horizontal-split ()
   (set-variable 'split-height-threshold nil t)
   (set-variable 'split-width-threshold 40 t)) ; make this as low as needed
 (add-hook 'markdown-mode-hook 'prefer-horizontal-split)
 (map! :leader
       :desc "Clone indirect buffer other window" "b c" #'clone-indirect-buffer-other-window)
+#+END_SRC
 
+* START PAGE
+#+BEGIN_SRC emacs-lisp
 (setq initial-buffer-choice "~/.doom.d/start.org")
 (add-hook 'start-mode-hook 'read-only-mode) ;; make start.org read-only; use 'SPC t r' to toggle off read-only.
+#+END_SRC
+#+RESULTS:
+| sequence | TODO(t) | BLOG(b) | GYM(g) | PROJ(p) | VIDEO(v) | WAIT(w) |   |   | DONE(d) | CANCELLED(c) |

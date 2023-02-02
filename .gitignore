@@ -1,3 +1,4 @@
 .DS_Store
-
+.doom.d/.doom.d.code-workspace
 tmp/
+node_modules
